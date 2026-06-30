@@ -1,0 +1,108 @@
+/* =========================
+   MAIN LAYOUT
+========================= */
+
+.viewer-container {
+    display: flex;
+    height: calc(100vh - 70px); /* navbar height adjust */
+    background: #fff;
+}
+
+/* =========================
+   LEFT SIDE – PDF VIEW
+========================= */
+
+.viewer-left {
+    flex: 2;
+    border-right: 1px solid #eee;
+}
+
+.viewer-left iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #f9f9f9;
+}
+
+/* =========================
+   RIGHT SIDE – INFO PANEL
+========================= */
+
+.viewer-right {
+    flex: 1;
+    padding: 18px;
+    overflow-y: auto;
+    position: sticky;
+    top: 70px; /* navbar height */
+    height: calc(100vh - 70px);
+}
+
+/* Title */
+.viewer-right h2 {
+    margin-bottom: 6px;
+    font-size: 20px;
+    line-height: 1.3;
+}
+
+/* Meta info */
+.meta {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 6px;
+}
+
+/* Divider */
+.viewer-right hr {
+    margin: 14px 0;
+    border: none;
+    border-top: 1px solid #eee;
+}
+
+/* Description */
+#vDesc {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+}
+
+/* =========================
+   ACTION BUTTONS (RIGHT)
+========================= */
+
+.viewer-actions {
+    margin-top: 14px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* SAME STYLE FOR ALL ACTIONS */
+.viewer-actions a,
+.viewer-actions button {
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 14px;
+    line-height: 1;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    background: #f7f7f7;
+    color: #000;
+}
+
+/* DOWNLOAD – PRIMARY */
+.viewer-actions a {
+    background: #1f6feb;
+    color: #fff;
+    border: none;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.viewer-actions a:hover {
+    background: #1a5fd0;
+}
+
+/* LIKE / DISLIKE */
+.viewer-actions button:hover {
+    background: #eee;
+}
