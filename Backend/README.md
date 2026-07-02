@@ -1,128 +1,170 @@
 # NHPC Knowledge Sharing Portal
 
-A web-based knowledge sharing system for employees to submit problem-solving
-solutions, reviewed by moderators and published for public access.
+A web-based knowledge sharing portal where employees can submit solutions, moderators can review them, and approved content becomes publicly viewable.
 
 ---
 
-## 🔧 Tech Stack
+## Features
+
+- Employee login and dashboard
+- Create, edit, delete, and submit solution drafts
+- Upload image/PDF attachments
+- Moderator review flow with approve/reject actions
+- Public viewing of approved solutions
+- View count and like/dislike reactions
+
+---
+
+## Tech Stack
 
 ### Frontend
 - HTML
 - CSS
-- JavaScript (Vanilla)
+- JavaScript (vanilla)
 
 ### Backend
 - Node.js
 - Express.js
 - MySQL
-- Multer (File Upload)
+- Multer
+- JSON Web Tokens
 
 ---
 
-## 👥 User Roles
+## User Roles
 
-### 1️⃣ Employee
-- Login to dashboard
-- Create solution as **Draft**
-- Edit/Delete Draft
-- Submit solution for review
-- Track status (Pending / Approved / Rejected)
-- View own submissions
+### Employee
+- Log in to the dashboard
+- Create solutions as drafts
+- Edit or delete drafts
+- Submit solutions for review
+- Track statuses such as Draft, Pending, Approved, and Rejected
 
-### 2️⃣ Moderator
-- View Pending / Approved / Rejected solutions
-- Filter by Area and Date
-- Read solution (Image + PDF)
-- Approve or Reject with reason
+### Moderator
+- View pending submissions
+- Approve or reject solutions
+- Add rejection reasons
+- Filter solutions by status, area, and date
 
-### 3️⃣ Public User
+### Public User
 - View approved solutions
-- Search and filter
-- Read solution in viewer
-- View count, like, dislike
-- Download PDF
+- Open the viewer
+- Download PDFs
+- See views and reactions
 
 ---
 
-## 🔁 Application Flow
+## Application Flow
 
-1. Employee creates a solution → saved as **Draft**
-2. Draft is edited and **Confirmed**
-3. Solution moves to **Pending**
-4. Moderator reviews:
-   - Approves → Publicly visible
-   - Rejects → Sent back with reason
-5. Public users can view approved solutions
-
----
-
-## 📁 Project Structure
-
-
-
+1. An employee creates a solution and saves it as a draft.
+2. The draft can be updated or deleted.
+3. The employee confirms/submits it for moderation.
+4. The moderator reviews the submission.
+   - Approve: it becomes publicly visible.
+   - Reject: it is returned with a rejection reason.
+5. Public users can browse approved solutions.
 
 ---
 
-## 🗄️ Database Schema (solutions table)
+## Project Structure
 
+- Backend/server.js - main Express server entry point
+- Backend/routes - authentication, draft, solution, and moderator routes
+- Backend/middleware - auth and access control middleware
+- Backend/public - static HTML/CSS/JS frontend files
+- Backend/uploads - uploaded files
+- Backend/config/db.js - MySQL connection and database initialization
+
+---
+
+## Database Setup
+
+The application uses MySQL.
+
+1. Create a database named nhpc_db.
+2. Update the environment variables in Backend/.env.
+3. The backend will automatically create the required tables on startup if they do not exist.
+
+### Main tables
+
+#### solutions
 | Column | Description |
-|------|------------|
+|---|---|
 | id | Primary key |
-| title | Problem title |
+| title | Solution title |
 | area | Work area |
-| description | Solution description |
+| description | Solution details |
 | employee | Employee ID |
 | status | Draft / Pending / Approved / Rejected |
-| image | Preview image |
-| pdf_file | Solution document |
-| views | View count |
-| likes | Likes |
-| dislikes | Dislikes |
+| image | Preview image filename |
+| pdf_file | Uploaded PDF filename |
 | reject_reason | Moderator remarks |
-| created_at | Created date |
-| updated_at | Last update |
+| views | View count |
+| created_at | Creation time |
+| updated_at | Last update time |
+
+#### users
+| Column | Description |
+|---|---|
+| id | Primary key |
+| employee_id | Employee or moderator identifier |
+| role | employee or moderator |
+
+#### solution_reactions
+| Column | Description |
+|---|---|
+| solution_id | Related solution |
+| employee_id | User who reacted |
+| type | like or dislike |
 
 ---
 
-## ▶️ How to Run the Project
+## Environment Variables
+
+Create a Backend/.env file with values like:
+
+```env
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_mysql_password
+DB_NAME=nhpc_db
+PORT=3000
+JWT_SECRET=your_secret_key
+```
+
+---
+
+## Running the Project
 
 ### Backend
+
 ```bash
-cd backend
+cd Backend
 npm install
-nodemon server.js
-npm run dev
+node server.js
+```
 
-
-## 🔐 Demo Login Credentials
-
-> ⚠️ Note: Ye credentials **demo / testing purpose** ke liye hardcoded hain.
-
-### 👨‍💼 Employee Login
-- **Employee ID:** `emp`
-- **Password:** `123`
-- **Redirects to:** Employee Dashboard
-
-> Internally employee code used: `EMP102`
+The frontend is served by the Express server, so opening the app at http://localhost:3000 will load the UI.
 
 ---
 
-### 🧑‍⚖️ Moderator Login
-- **Moderator ID:** `mod`
-- **Password:** `123`
-- **Redirects to:** Moderator Dashboard
+## Demo Login Credentials
+
+The app uses the external NHPC auth API when available. For local testing, it also supports these demo credentials:
+
+### Employee
+- Employee ID: emp
+- Password: 123
+
+### Moderator
+- Employee ID: mod
+- Password: 123
+
+These credentials are intended for local demo/testing use.
 
 ---
 
-### 🌐 Public User
-- No login required
-- Can view only **Approved** solutions
-- View, Download PDF, Like / Dislike available
+## Notes
 
----
-
-### 🔄 Redirect Logic
-- If a user clicks **View** without login:
-  - Redirected to Login Page
-  - After login, user is redirected back to the requested page
+- If the external auth service is unavailable, the app falls back to the demo credentials above.
+- Make sure MySQL is running before starting the backend.
