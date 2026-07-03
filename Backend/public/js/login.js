@@ -15,32 +15,24 @@ function loginUser(event) {
             password: pass
         })
     })
-    .then(res => res.json())
-   .then(data => {
+    .then(async res => {
+        const data = await res.json().catch(() => ({}));
+        console.log("LOGIN RESPONSE:", data);
 
-    console.log("LOGIN RESPONSE:", data);   //
+        if (res.ok && data.success) {
+            sessionStorage.setItem("token", data.token);
+            sessionStorage.setItem("loggedInUser", data.userId);
+            sessionStorage.setItem("roles", JSON.stringify(data.roles));
 
-    if (data.success) {
-
-        // 🔐 Save token
-        sessionStorage.setItem("token", data.token);
-        sessionStorage.setItem("loggedInUser", data.userId);
-
-        // 🔥 IMPORTANT — roles array save karo
-        sessionStorage.setItem("roles", JSON.stringify(data.roles));
-
-        // 🔁 Redirect based on roles
-        if (data.roles.includes("moderator")) {
-            window.location.href = "home.html";
+            if (data.roles.includes("moderator")) {
+                window.location.href = "home.html";
+            } else {
+                window.location.href = "home.html";
+            }
         } else {
-            window.location.href = "home.html";
+            alert(data.message || "Invalid ID or Password");
         }
-
-    } else {
-        alert("Invalid ID or Password");
-    }
-
-})
+    })
     .catch(err => {
         console.log("Login Error:", err);
         alert("Login failed");
