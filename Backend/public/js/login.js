@@ -1,6 +1,18 @@
 
+function setLoginLoading(isLoading) {
+    const loader = document.getElementById("loginLoader");
+    const button = document.getElementById("loginButton");
+
+    if (!loader || !button) return;
+
+    button.disabled = isLoading;
+    button.textContent = isLoading ? "Logging in..." : "Login";
+    loader.classList.toggle("hidden", !isLoading);
+}
+
 function loginUser(event) {
     event.preventDefault();
+    setLoginLoading(true);
 
     const empId = document.querySelector('input[type="text"]').value;
     const pass = document.querySelector('input[type="password"]').value;
@@ -24,11 +36,7 @@ function loginUser(event) {
             sessionStorage.setItem("loggedInUser", data.userId);
             sessionStorage.setItem("roles", JSON.stringify(data.roles));
 
-            if (data.roles.includes("moderator")) {
-                window.location.href = "home.html";
-            } else {
-                window.location.href = "home.html";
-            }
+            window.location.href = "home.html";
         } else {
             alert(data.message || "Invalid ID or Password");
         }
@@ -36,5 +44,8 @@ function loginUser(event) {
     .catch(err => {
         console.log("Login Error:", err);
         alert("Login failed");
+    })
+    .finally(() => {
+        setLoginLoading(false);
     });
 }
