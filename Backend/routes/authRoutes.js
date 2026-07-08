@@ -38,6 +38,26 @@ function extractRoles(data, fallbackRoles) {
     return fallbackRoles;
 }
 
+async function validateEmployeeWithDatabase(user) {
+    const [rows] = await db.promise().query(
+        "SELECT role FROM users WHERE employee_id = ? LIMIT 1",
+        [user]
+    );
+
+    if (rows.length === 0) {
+        return { success: false, data: null, message: "User not found in database" };
+    }
+
+    const dbUser = rows[0];
+
+    return {
+        success: true,
+        data: {
+            roles: dbUser.role ? [dbUser.role] : ["employee"]
+        }
+    };
+}
+
 async function validateEmployeeWithApi(user, password) {
     const apiUrl = getEmployeeAuthApiUrl();
 
@@ -50,10 +70,10 @@ async function validateEmployeeWithApi(user, password) {
 
     for (const payload of payloads) {
         try {
-            const response = await axios.post(apiUrl, payload, { timeout: 5000 });
+            const response = await axios.post(apiUrl, payload, { timeout: 8000 });
             const data = response?.data;
 
-            console.log("Auth API response for payload:", JSON.stringify(payload), "=>", data);
+            console.log("Auth API response for payload:", JSON.stringify(payload), "status:", response.status, "=>", data);
 
             const isSuccess = data?.success === true || data?.authenticated === true || data?.status === "success";
 
@@ -64,7 +84,19 @@ async function validateEmployeeWithApi(user, password) {
             lastError = new Error(data?.message || data?.error || "API returned unsuccessful response");
         } catch (err) {
             console.log("Auth API attempt failed for payload:", JSON.stringify(payload), "=>", err.message);
-            lastError = err;
+            if (err.response) {
+                // Log response details for debugging (400/4xx/5xx)
+                try {
+                    console.log("Auth API error response status:", err.response.status);
+                    console.log("Auth API error response data:", JSON.stringify(err.response.data));
+                    lastError = new Error(`Status ${err.response.status}: ${JSON.stringify(err.response.data)}`);
+                } catch (e) {
+                    console.log("Error stringifying error response:", e.message);
+                    lastError = err;
+                }
+            } else {
+                lastError = err;
+            }
         }
     }
 
@@ -83,29 +115,29 @@ router.post("/login", async (req, res) => {
         const normalizedPassword = String(password || "").trim();
         const demoUser = DEMO_USERS[normalizedUser] || DEMO_USERS[normalizedUser.toLowerCase()];
 
-        let authSuccess = false;
-        let authData = null;
         let roles = ["employee"];
         let apiResult = { success: false, data: null, message: "Invalid credentials" };
 
         if (demoUser && normalizedPassword === demoUser.password) {
-            authSuccess = true;
-            authData = { success: true };
             roles = demoUser.roles;
+            apiResult = { success: true, data: { roles } };
         } else {
-            apiResult = await validateEmployeeWithApi(normalizedUser, normalizedPassword);
-            if (apiResult.success) {
-                authSuccess = true;
-                authData = apiResult.data;
-                roles = extractRoles(apiResult.data, ["employee"]);
+            const dbResult = await validateEmployeeWithDatabase(normalizedUser);
+
+            if (dbResult.success) {
+                apiResult = dbResult;
+            } else {
+                apiResult = await validateEmployeeWithApi(normalizedUser, normalizedPassword);
             }
         }
 
-        if (!authSuccess) {
+        if (!apiResult.success) {
             return res.status(401).json({
                 message: apiResult.message || "Invalid credentials"
             });
         }
+
+        roles = extractRoles(apiResult.data, roles);
 
         const [rows] = await db.promise().query(
             "SELECT role FROM users WHERE employee_id = ?",

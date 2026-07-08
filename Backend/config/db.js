@@ -28,6 +28,7 @@ async function initializeDatabase() {
             id INT AUTO_INCREMENT PRIMARY KEY,
             employee_id VARCHAR(50) UNIQUE NOT NULL,
             role VARCHAR(50) DEFAULT 'employee',
+            password_hash VARCHAR(255) NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )`,
         `CREATE TABLE IF NOT EXISTS solution_reactions (
@@ -41,6 +42,16 @@ async function initializeDatabase() {
 
     for (const sql of migrations) {
         await db.promise().query(sql);
+    }
+
+    const [passwordHashColumns] = await db.promise().query(
+        "SHOW COLUMNS FROM users LIKE 'password_hash'"
+    );
+
+    if (passwordHashColumns.length === 0) {
+        await db.promise().query(
+            "ALTER TABLE users ADD COLUMN password_hash VARCHAR(255) NULL AFTER role"
+        );
     }
 }
 

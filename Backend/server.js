@@ -1,4 +1,5 @@
 require("dotenv").config();
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 
@@ -7,30 +8,21 @@ const solutionRoutes = require("./routes/solutionRoutes");
 const moderatorRoutes = require("./routes/moderatorRoutes");
 const authRoutes = require("./routes/authRoutes");
 
-
 const app = express();
+const frontendPath = path.join(__dirname, "..", "frontend");
+const uploadsPath = path.join(__dirname, "uploads");
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static("public"));
-app.use("/uploads", express.static("uploads"));
+app.use(express.static(frontendPath));
+app.use("/uploads", express.static(uploadsPath));
 
-/* =======================
-Home route
-======================= */
 app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/public/home.html");
+    res.sendFile(path.join(frontendPath, "home.html"));
 });
 
-
-/* =======================
-TEST
-======================= */
-app.get("/", (req, res) => {
-    res.send("NHPC Backend Running 🚀");
-});
 app.use("/api/auth", authRoutes);
 app.use("/api/solutions", draftRoutes);
 app.use("/api/solutions", solutionRoutes);

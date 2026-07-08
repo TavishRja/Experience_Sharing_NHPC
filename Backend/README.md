@@ -71,9 +71,9 @@ A web-based knowledge sharing portal where employees can submit solutions, moder
 - Backend/server.js - main Express server entry point
 - Backend/routes - authentication, draft, solution, and moderator routes
 - Backend/middleware - auth and access control middleware
-- Backend/public - static HTML/CSS/JS frontend files
-- Backend/uploads - uploaded files
 - Backend/config/db.js - MySQL connection and database initialization
+- frontend/ - static HTML/CSS/JS files for the UI
+- Backend/uploads - uploaded files
 
 ---
 
@@ -148,23 +148,11 @@ The frontend is served by the Express server, so opening the app at http://local
 
 ---
 
-## Demo Login Credentials
-
-The app uses the external NHPC auth API when available. For local testing, it also supports these demo credentials:
-
-### Employee
-- Employee ID: emp
-- Password: 123
-
-### Moderator
-- Employee ID: mod
-- Password: 123
-
-These credentials are intended for local demo/testing use.
-
----
-
 ## Notes
 
-- If the external auth service is unavailable, the app falls back to the demo credentials above.
+- Login supports both hardcoded demo users and the configured external employee auth API.
+- Demo users: `emp / 123`, `mod / 123`, `EMP102 / 123`.
+- Login also supports employee IDs that already exist in the local `users` table.
+- If an `employee_id` exists in `users`, that user can log in as an employee from the same login form.
+- Make sure `EMPLOYEE_AUTH_API_URL` is set and reachable if you want employee API-based login.
 - Make sure MySQL is running before starting the backend.
