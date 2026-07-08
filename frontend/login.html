@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="login-wrapper">
+        <div class="login-container">
+
+            <h2>Login</h2>
+            <form onsubmit="loginUser(event)">
+                <div class="form-group">
+                    <label>Employee ID</label>
+                    <input type="text" placeholder="Enter Employee ID">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" placeholder="Enter your Password">
+                </div>
+                <div class="form-options">
+                    <label>
+                        <input type="checkbox">Remember Me
+                    </label>
+                    <a href="#">Forgot password?</a>
+                </div>
+
+                <button id="loginButton" type="submit">Login</button>
+
+                <div id="loginLoader" class="loader-overlay hidden">
+                    <div class="loader-content">
+                        <div class="spinner"></div>
+                        <div class="loader-text">Logging in, please wait...</div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script src="js/login.js"></script>
+    
+</body >
+
+</html >

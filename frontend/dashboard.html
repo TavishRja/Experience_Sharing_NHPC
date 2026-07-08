@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo-box">
+            <img src="public/image.png" class="logo-img">
+            <span>NHPC Portal</span>
+        </div>
+
+        <nav>
+            <a href="home.html">Home</a>
+            <a href="#" onclick="logoutUser()">Logout</a>
+            <a href="home.html">All Solutions</a>
+        </nav>
+    </header>
+
+    <section class="container">
+
+
+        <h3 style="margin-top:30px;">📝 Drafts</h3>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Last Saved</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+
+            <!-- 👇 YE ID IMPORTANT HAI -->
+            <tbody id="draftTable"></tbody>
+        </table>
+        <div class="dash-header">
+            <h2>My Submissions</h2>
+            <!-- <button class="btn" onclick="editDraft()">Edit Draft</button> -->
+            <a href="upload.html" class="btn" onclick="localStorage.removeItem('draftSolution')">
+                + Create New Article
+            </a>
+        </div>
+        <div class="filters">
+            <select id="areaFilter">
+                <option value="">All Areas</option>
+                <option value="Dam">Dam</option>
+                <option value="CO Office">CO Office</option>
+                <option value="Project Station">Project Station</option>
+            </select>
+
+            <div class="date-range">
+                <input type="date" id="fromDate">
+                <span>to</span>
+                <input type="date" id="toDate">
+            </div>
+        </div>
+
+
+        <table class="data-table">
+
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Area</th>
+                    <th>Employee No</th>
+                    <th>Status</th>
+                    <th>Date</th> <!-- ✅ DATE COLUMN -->
+                    <th>View</th>
+                </tr>
+            </thead>
+
+            <!-- ✅ SUBMISSIONS TABLE -->
+            <tbody id="tableBody"></tbody>
+
+        </table>
+
+    </section>
+
+
+    <!-- VIEW MODAL -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+
+            <img id="mImage" class="modal-img" style="display:none;">
+
+            <div id="pdfBox" style="display:none; margin:10px 0;">
+                <p><b>PDF Attached</b></p>
+                <a id="pdfLink" target="_blank" class="btn">Open PDF</a>
+            </div>
+
+            <h3 id="mTitle"></h3>
+            <p><b>Area:</b> <span id="mArea"></span></p>
+            <p><b>Description:</b> <span id="mDesc"></span></p>
+            <p><b>Status:</b> <span id="mStatus"></span></p>
+            <p><b>Date:</b> <span id="mDate"></span></p>
+        </div>
+    </div>
+
+
+
+
+    <script src="js/dashboard.js"></script>
+
+</body>
+
+</html>
